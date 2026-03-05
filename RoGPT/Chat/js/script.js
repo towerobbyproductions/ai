@@ -1,6 +1,6 @@
 // Конфигурация
 const CONFIG = {
-    API_URL: 'https://script.google.com/macros/s/ВАШ_ID_СКРИПТА/exec',
+    API_URL: 'https://script.google.com/macros/s/AKfycbxUrCC-a18KuKxh5LdMYuB-G_VF1cX7RRA7sbdoq1OAQPXNxenwQgPopyULmZTgG4AP/exec',
     DEEPSEEK_API_KEY: 'sk-c5d3651df6864e1aa121c9f65b108fb4',
     MAX_HISTORY: 50,
     TYPING_DELAY: 500
