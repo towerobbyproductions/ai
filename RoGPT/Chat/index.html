@@ -1,1 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoGPT - AI помощник для Roblox Studio</title>
+    
+    <!-- SEO Meta tags -->
+    <meta name="description" content="RoGPT - специализированный AI помощник для создания скриптов в Roblox Studio. Помогает с Lua программированием, игровыми механиками и оптимизацией.">
+    <meta name="keywords" content="Roblox, Roblox Studio, Lua, AI, скрипты, программирование, игры">
+    
+    <!-- Fonts and Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <span>RoGPT</span>
+            </div>
+            <div class="nav-links">
+                <a href="#chat" class="active"><i class="fas fa-comment"></i> Чат</a>
+                <a href="#templates"><i class="fas fa-code"></i> Шаблоны</a>
+                <a href="#docs"><i class="fas fa-book"></i> Документация</a>
+                <a href="#examples"><i class="fas fa-gamepad"></i> Примеры</a>
+            </div>
+            <div class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </div>
+        </div>
+    </nav>
 
+    <!-- Главный контейнер -->
+    <div class="container">
+        <!-- Боковая панель -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3><i class="fas fa-history"></i> История</h3>
+                <div class="chat-history">
+                    <!-- Динамически загружается -->
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3><i class="fas fa-star"></i> Избранное</h3>
+                <div class="favorites-list">
+                    <!-- Динамически загружается -->
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3><i class="fas fa-tags"></i> Категории</h3>
+                <div class="categories">
+                    <div class="category" data-cat="movement">
+                        <i class="fas fa-person-walking"></i> Движение
+                    </div>
+                    <div class="category" data-cat="combat">
+                        <i class="fas fa-fist-raised"></i> Боевка
+                    </div>
+                    <div class="category" data-cat="ui">
+                        <i class="fas fa-window-maximize"></i> Интерфейс
+                    </div>
+                    <div class="category" data-cat="data">
+                        <i class="fas fa-database"></i> DataStore
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Основной чат -->
+        <main class="main-content">
+            <div class="chat-header">
+                <h2><i class="fas fa-comment-dots"></i> Чат с RoGPT</h2>
+                <div class="chat-status">
+                    <span class="status-indicator online"></span>
+                    <span>Online</span>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messages">
+                <!-- Приветственное сообщение -->
+                <div class="message welcome">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">RoGPT</span>
+                            <span class="message-time">Только что</span>
+                        </div>
+                        <div class="message-text">
+                            <h4>👋 Привет! Я RoGPT - твой персональный AI помощник для Roblox Studio!</h4>
+                            <p>Я могу помочь тебе с:</p>
+                            <ul>
+                                <li><i class="fas fa-code"></i> Написанием скриптов на Lua</li>
+                                <li><i class="fas fa-gamepad"></i> Созданием игровых механик</li>
+                                <li><i class="fas fa-rocket"></i> Оптимизацией производительности</li>
+                                <li><i class="fas fa-bug"></i> Отладкой кода</li>
+                                <li><i class="fas fa-graduation-cap"></i> Обучением разработке</li>
+                            </ul>
+                            <p>Задай любой вопрос о Roblox разработке! 🚀</p>
+                        </div>
+                        <div class="message-actions">
+                            <button class="action-btn copy-msg"><i class="far fa-copy"></i></button>
+                            <button class="action-btn favorite"><i class="far fa-star"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Быстрые шаблоны -->
+            <div class="quick-templates">
+                <div class="template-chip" data-prompt="Создай скрипт для движения игрока от третьего лица">
+                    <i class="fas fa-person-walking"></i> Движение
+                </div>
+                <div class="template-chip" data-prompt="Напиши скрипт для интерактивной двери">
+                    <i class="fas fa-door-open"></i> Дверь
+                </div>
+                <div class="template-chip" data-prompt="Создай систему инвентаря с GUI">
+                    <i class="fas fa-box"></i> Инвентарь
+                </div>
+                <div class="template-chip" data-prompt="Объясни как работают RemoteEvents и RemoteFunctions">
+                    <i class="fas fa-network-wired"></i> RemoteEvents
+                </div>
+                <div class="template-chip" data-prompt="Напиши скрипт для системы уровней и опыта">
+                    <i class="fas fa-chart-line"></i> Уровни
+                </div>
+                <div class="template-chip" data-prompt="Создай систему сохранения данных через DataStore">
+                    <i class="fas fa-database"></i> DataStore
+                </div>
+            </div>
+
+            <!-- Поле ввода -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="userInput" placeholder="Напиши свой вопрос о Roblox разработке..." rows="1"></textarea>
+                    <div class="input-tools">
+                        <button class="tool-btn" id="attachFile" title="Прикрепить файл">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="tool-btn" id="insertCode" title="Вставить код">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <button class="tool-btn" id="clearChat" title="Очистить чат">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="send-btn" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Отправить</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- Панель информации -->
+        <aside class="info-panel">
+            <div class="info-section">
+                <h3><i class="fas fa-lightbulb"></i> Совет дня</h3>
+                <div class="tip-of-day">
+                    <p>Используй <code>:GetService()</code> вместо <code>game.Service</code> для лучшей производительности</p>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fas fa-clock"></i> Последние запросы</h3>
+                <div class="recent-requests">
+                    <!-- Динамически загружается -->
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fas fa-link"></i> Полезные ссылки</h3>
+                <div class="useful-links">
+                    <a href="https://create.roblox.com/docs" target="_blank">
+                        <i class="fas fa-book"></i> Roblox Docs
+                    </a>
+                    <a href="https://developer.roblox.com/en-us/articles" target="_blank">
+                        <i class="fas fa-newspaper"></i> Статьи
+                    </a>
+                    <a href="https://devforum.roblox.com/" target="_blank">
+                        <i class="fas fa-comments"></i> DevForum
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Модальное окно для кода -->
+    <div class="modal" id="codeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Вставь свой код для анализа</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="codeInput" placeholder="Вставь сюда свой Lua код..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn">Отмена</button>
+                <button class="analyze-btn">Анализировать код</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипты -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
