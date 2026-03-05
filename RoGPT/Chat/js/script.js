@@ -366,4 +366,255 @@ function addMessage(text, sender) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
     
     // Подсвечиваем синтаксис
-    messageDiv.querySelectorAll('pre code
+    messageDiv.querySelectorAll('pre code').forEach(block => {
+        hljs.highlightElement(block);
+    });
+}
+
+// Форматирование сообщения
+function formatMessage(text) {
+    // Экранируем HTML
+    text = text.replace(/[&<>"]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        if (m === '"') return '&quot;';
+        return m;
+    });
+    
+    // Конвертируем markdown в HTML
+    if (window.marked) {
+        text = marked.parse(text, {
+            highlight: function(code, lang) {
+                if (lang === 'lua') {
+                    return hljs.highlight(code, { language: 'lua' }).value;
+                }
+                return code;
+            }
+        });
+    }
+    
+    return text;
+}
+
+// Индикатор печатания
+function showTypingIndicator() {
+    const messagesContainer = document.getElementById('messages');
+    const indicator = document.createElement('div');
+    indicator.className = 'message bot-message typing-indicator';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+        <div class="message-avatar">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="message-content">
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    `;
+    messagesContainer.appendChild(indicator);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// Приветственное сообщение
+function addWelcomeMessage() {
+    if (document.querySelectorAll('.message').length === 1) return;
+    
+    const welcomeText = `
+# 👋 Привет! Я RoGPT
+
+Я твой персональный AI помощник для **Roblox Studio** и **Lua программирования**!
+
+## Что я умею:
+- 📝 **Писать скрипты** - от простых до сложных
+- 🎮 **Создавать механики** - движение, боевка, инвентарь
+- 🔧 **Оптимизировать код** - улучшаю производительность
+- 🐛 **Отлаживать** - нахожу и исправляю ошибки
+- 📚 **Обучать** - объясняю сложные концепции
+
+## Примеры запросов:
+- "Напиши скрипт для прыжка от стены"
+- "Как сделать систему сохранений?"
+- "Объясни RemoteEvents"
+- "Оптимизируй этот код"
+
+**Чем я могу помочь тебе сегодня?** 🚀
+    `;
+    
+    addMessage(welcomeText, 'bot');
+}
+
+// Копирование сообщения
+function copyMessage(button) {
+    const messageText = button.closest('.message-content').querySelector('.message-text').innerText;
+    navigator.clipboard.writeText(messageText).then(() => {
+        showNotification('Скопировано!', 'success');
+    });
+}
+
+// Избранное
+function toggleFavorite(button) {
+    const messageContent = button.closest('.message-content');
+    const messageText = messageContent.querySelector('.message-text').innerHTML;
+    const icon = button.querySelector('i');
+    
+    if (icon.classList.contains('fas')) {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        // Удаляем из избранного
+        state.favorites = state.favorites.filter(f => f.content !== messageText);
+    } else {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        // Добавляем в избранное
+        state.favorites.push({
+            content: messageText,
+            timestamp: new Date().toISOString()
+        });
+    }
+    
+    saveToStorage();
+    updateFavorites();
+}
+
+// Обновление избранного
+function updateFavorites() {
+    const favoritesList = document.querySelector('.favorites-list');
+    if (!favoritesList) return;
+    
+    favoritesList.innerHTML = '';
+    state.favorites.slice(-5).forEach(fav => {
+        const div = document.createElement('div');
+        div.className = 'favorite-item';
+        div.innerHTML = `
+            <i class="fas fa-star"></i>
+            <span>${fav.content.substring(0, 50)}...</span>
+        `;
+        favoritesList.appendChild(div);
+    });
+}
+
+// Прикрепление файла
+function attachFile() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.lua,.txt';
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('userInput').value = 
+                `Проанализируй этот код:\n\n\`\`\`lua\n${e.target.result}\n\`\`\``;
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
+// Модальное окно для кода
+function showCodeModal() {
+    document.getElementById('codeModal').classList.add('active');
+}
+
+function hideCodeModal() {
+    document.getElementById('codeModal').classList.remove('active');
+    document.getElementById('codeInput').value = '';
+}
+
+function analyzeCode() {
+    const code = document.getElementById('codeInput').value.trim();
+    if (code) {
+        document.getElementById('userInput').value = 
+            `Проанализируй этот код и предложи улучшения:\n\n\`\`\`lua\n${code}\n\`\`\``;
+        hideCodeModal();
+        sendMessage();
+    }
+}
+
+// Очистка чата
+function clearChat() {
+    if (confirm('Очистить историю чата?')) {
+        document.getElementById('messages').innerHTML = '';
+        addWelcomeMessage();
+        state.messages = [];
+    }
+}
+
+// Переключение темы
+function toggleTheme() {
+    const root = document.documentElement;
+    const icon = document.querySelector('.theme-toggle i');
+    
+    if (state.theme === 'dark') {
+        root.style.setProperty('--bg-dark', '#f5f5f5');
+        root.style.setProperty('--bg-darker', '#ffffff');
+        root.style.setProperty('--bg-light', '#e0e0e0');
+        root.style.setProperty('--text-primary', '#333333');
+        root.style.setProperty('--text-secondary', '#666666');
+        root.style.setProperty('--border-color', '#dddddd');
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+        state.theme = 'light';
+    } else {
+        root.style.setProperty('--bg-dark', '#1a1b1e');
+        root.style.setProperty('--bg-darker', '#141517');
+        root.style.setProperty('--bg-light', '#2c2d32');
+        root.style.setProperty('--text-primary', '#ffffff');
+        root.style.setProperty('--text-secondary', '#a0a0a0');
+        root.style.setProperty('--border-color', '#3a3b3f');
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+        state.theme = 'dark';
+    }
+}
+
+// Уведомления
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Обновление боковой панели
+function updateSidebar() {
+    const historyContainer = document.querySelector('.chat-history');
+    if (historyContainer) {
+        historyContainer.innerHTML = '';
+        state.history.slice(-5).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            div.innerHTML = `
+                <i class="fas fa-message"></i>
+                <span>${item.question.substring(0, 30)}...</span>
+            `;
+            div.onclick = () => {
+                document.getElementById('userInput').value = item.question;
+            };
+            historyContainer.appendChild(div);
+        });
+    }
+    
+    updateFavorites();
+}
+
+// Экспорт функций для глобального доступа
+window.copyMessage = copyMessage;
+window.toggleFavorite = toggleFavorite;
